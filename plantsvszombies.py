@@ -1,6 +1,4 @@
 
-import sys
-sys.path.append('data')
-from main import Control
+from data.main import Control
 
 Control()
