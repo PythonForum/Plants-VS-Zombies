@@ -1,26 +1,30 @@
+"""
+Module: main.py
+Overview:
+    The main function is defined here. It simply creates an instance of
+    tools.Control and adds the game states to its dictionary using
+    tools.setup_states.  There should be no need (theoretically) to edit
+    the tools.Control class.  All modifications should occur in this module
+    and in the setup module.
+Imports:
+    pygame as pg
+    os,sys
+    from . import setup,tools
+    from .states import title
+Functions:
+    main()
+"""
+import pygame as pg
+import os,sys
 
-import pygame
+from . import setup,tools
+from .states import title #menu, game
 
-class Control:
-    def __init__(self):
-        pygame.init()
-        self.screensize = (400,400)
-        self.screen = pygame.display.set_mode(self.screensize)
-        pygame.display.set_caption('Plants VS Zombies')
-        self.clock = pygame.time.Clock()
-        self.gamestate = True
-        self.mainloop()
-        
-    def update(self):
-        pass 
-        
-    def mainloop(self):
-        while self.gamestate:
-            for event in pygame.event.get():
-                if event.type == pygame.QUIT:
-                    self.gamestate = False
-            self.update()
-            pygame.display.flip()
-            
-if __name__ == '__main__':
-    app = Control()
+def main():
+    """Add states to control here."""
+    RunIt = tools.Control(setup.ORIGINAL_CAPTION)
+    state_dict = {"TITLE"  : title.Title()}
+##                  "MENU"   : menu.Menu(),
+##                  "GAME"   : game.Game()}
+    RunIt.setup_states(state_dict,"TITLE")
+    RunIt.main()
