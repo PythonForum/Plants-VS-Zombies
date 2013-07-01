@@ -6,9 +6,9 @@ b) Fork this repo to your account
 c) Learn some git commands: http://try.github.io/levels/1/challenges/1
 
 
-1) Request on forums to become a contributor of this repo
+1) Request on forums to become a collaborator of this repo, or make contribution with a pull request
 http://www.python-forum.org/viewtopic.php?f=26&t=4407&p=5571#p5571
-2) Take an assignement
+2) Take an assignment
  
 
 
