@@ -7,6 +7,10 @@ class Splash(tools._State):
         tools._State.__init__(self)
         self.next = "TITLE"
         self.timeout = 4
+        self.cover = pg.Surface((su.SCREEN_SIZE))
+        self.cover.fill((0,0,0))
+        self.cover_alpha = 256
+        self.cover.set_alpha(self.cover_alpha)
 
         self.python_image = su.GFX['python_powered']
         self.python_image_rect = self.python_image.get_rect(center=(su.SCREEN_RECT.centerx,75))
@@ -33,8 +37,12 @@ class Splash(tools._State):
         Surf.blit(self.pygame_image, self.pygame_image_rect)
         Surf.blit(self.forum_image, self.forum_image_rect)
         Surf.blit(self.forum_name, self.forum_name_rect)
+        self.cover.set_alpha(self.cover_alpha)
+        Surf.blit(self.cover, (0,0))
         if pg.time.get_ticks()-self.start_time > 1000.0*self.timeout:
             self.done = True
+        elif self.cover_alpha:
+            self.cover_alpha -= 1
 
     def get_event(self,event):
         """Get events from Control. Currently changes to next state on any key
