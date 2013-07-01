@@ -3,7 +3,7 @@ community to create a game (using the pygame API) together.
 Program is licensed under the GPL3 and can be used and edited freely.
 No warranty of any kind expressed or implied.
 
--appended by Mekire July 30th, 2013.
+-appended by Mekire June 30th, 2013.
 """
 import pygame as pg
 import sys
