@@ -150,7 +150,7 @@ def load_all_gfx(directory,colorkey=(255,0,255),accept=(".png",".jpg",".bmp")):
 
 def load_all_music(directory,accept=(".wav",".mp3",".ogg",".mdi")):
     """Create a dictionary of paths to music files in given directory
-    if there extensions are in accept."""
+    if their extensions are in accept."""
     songs = {}
     for song in os.listdir(directory):
         name,ext = os.path.splitext(song)
@@ -160,7 +160,7 @@ def load_all_music(directory,accept=(".wav",".mp3",".ogg",".mdi")):
 
 def load_all_fonts(directory,accept=(".ttf",)):
     """Create a dictionary of paths to font files in given directory
-    if there extensions are in accept."""
+    if their extensions are in accept."""
     return load_all_music(directory,accept)
 
 def load_all_sfx(directory,accept=(".wav",".mp3",".ogg",".mdi")):
