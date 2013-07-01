@@ -18,13 +18,16 @@ import pygame as pg
 import os,sys
 
 from . import setup,tools
-from .states import title #menu, game
+from .states import title, splash #menu, game
 
 def main():
     """Add states to control here."""
     RunIt = tools.Control(setup.ORIGINAL_CAPTION)
-    state_dict = {"TITLE"  : title.Title()}
+    state_dict = {  
+        "SPLASH" : splash.Splash(),
+        "TITLE"  : title.Title()
+    }
 ##                  "MENU"   : menu.Menu(),
 ##                  "GAME"   : game.Game()}
-    RunIt.setup_states(state_dict,"TITLE")
+    RunIt.setup_states(state_dict,"SPLASH")
     RunIt.main()
