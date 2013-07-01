@@ -8,19 +8,18 @@ class Splash(tools._State):
         self.next = "TITLE"
         self.timeout = 4
 
-        self.next = 'TITLE'
         self.python_image = su.GFX['python_powered']
         self.python_image_rect = self.python_image.get_rect(center=(su.SCREEN_RECT.centerx,75))
 
         self.pygame_image = su.GFX['pygame_powered']
         self.pygame_image_rect = self.pygame_image.get_rect(center=(su.SCREEN_RECT.centerx,200))
-        
+
         self.forum_image = su.GFX['forum'] #not sure what forum logo is or will be
         self.forum_image_rect = self.forum_image.get_rect(center=(su.SCREEN_RECT.centerx,400))
-        
+
         self.forum_name = self.render_font("Fixedsys500c",30,"python-forum.org",(0,0,0))
         self.forum_name_rect = self.forum_name.get_rect(center=(su.SCREEN_RECT.centerx,520))
-        
+
     def render_font(self,font,size,msg,color=(255,255,255)):
         """Takes the name of a loaded font, the size, and the color and returns
         a rendered surface of the msg given."""
@@ -42,6 +41,3 @@ class Splash(tools._State):
         press."""
         if event.type == pg.KEYDOWN:
             self.done = True
-        
-
-
