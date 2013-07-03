@@ -1,7 +1,7 @@
 """
 Module: title.py
 Overview:
-    This is currently a placholder for the Title State of the game.
+    This is currently a placeholder for the Title State of the game.
 Imports:
     pygame as pg
     from .. import setup as su,tools

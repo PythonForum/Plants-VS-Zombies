@@ -86,8 +86,8 @@ class Control(object):
         """Press f5 to turn on/off displaying the framerate in the caption."""
         if self.keys[pg.K_F5]:
             self.show_fps = not self.show_fps
-        if not self.show_fps:
-            pg.display.set_caption(self.caption)
+            if not self.show_fps:
+                pg.display.set_caption(self.caption)
     def main(self):
         """Main loop for entire program."""
         while not self.done:
