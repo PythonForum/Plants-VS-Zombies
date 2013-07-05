@@ -33,6 +33,17 @@ class Credits(tools._State):
         self.ne_key_rect = self.ne_key.get_rect(center=(su.SCREEN_RECT.centerx,500))
         self.blink = False
         self.timer = 0.0
+    
+        
+    def cleanup(self):
+        self.names = []
+        for name in self.name_list:
+            obj = self.render_font("Fixedsys500c",40, name)
+            obj_rect = obj.get_rect(center=(su.SCREEN_RECT.centerx,su.SCREEN_RECT.centery + self.spacer))
+            self.names.append([obj, obj_rect])
+            self.spacer += self.spacing
+        self.done = False
+        return self.persist
 
     def render_font(self,font,size,msg,color=(255,255,255)):
         """Takes the name of a loaded font, the size, and the color and returns
@@ -43,14 +54,13 @@ class Credits(tools._State):
     def update(self,Surf,keys,mouse):
         """Updates the title screen."""
         Surf.fill((0,0,0))
-
+            
         for num, name in enumerate(self.names[:]):
-            if self.names[num][1][1] > 0:
+            if self.names[num][1].bottom > 0:
                 Surf.blit(name[0], name[1])
-            elif self.names[-1][1][1] < 0:
+            elif self.names[-1][1].bottom < 0:
                 self.next = "MENU"
                 self.done = True
-                self.spacer = 0
             self.names[num][1][1] -= self.scroll_speed
 
         if pg.time.get_ticks() - self.timer > 1000/5.0:
@@ -65,4 +75,3 @@ class Credits(tools._State):
         if event.type == pg.KEYDOWN:
             self.next = "MENU"
             self.done = True
-            self.spacer = 0
