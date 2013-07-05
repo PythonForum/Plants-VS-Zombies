@@ -8,6 +8,9 @@ class Credits(tools._State):
     """This State is updated while our game shows the Credit screen."""
     def __init__(self):
         tools._State.__init__(self)
+        self.spacer = 0
+        self.spacing = 100
+        self.scroll_speed = 2
         self.name_list = [
             'person1',
             'person2',
@@ -22,8 +25,9 @@ class Credits(tools._State):
         self.names = []
         for name in self.name_list:
             obj = self.render_font("Fixedsys500c",40, name)
-            obj_rect = obj.get_rect(center=(su.SCREEN_RECT.centerx,su.SCREEN_RECT.centery))
+            obj_rect = obj.get_rect(center=(su.SCREEN_RECT.centerx,su.SCREEN_RECT.centery + self.spacer))
             self.names.append([obj, obj_rect])
+            self.spacer += self.spacing
         
         self.ne_key = self.render_font("Fixedsys500c",20,"[Press Any Key]",(255,255,0))
         self.ne_key_rect = self.ne_key.get_rect(center=(su.SCREEN_RECT.centerx,500))
@@ -40,8 +44,15 @@ class Credits(tools._State):
         """Updates the title screen."""
         Surf.fill((0,0,0))
 
-        for name in self.names:
-            Surf.blit(name[0], name[1])
+        for num, name in enumerate(self.names[:]):
+            if self.names[num][1][1] > 0:
+                Surf.blit(name[0], name[1])
+            elif self.names[-1][1][1] < 0:
+                self.next = "MENU"
+                self.done = True
+                self.spacer = 0
+            self.names[num][1][1] -= self.scroll_speed
+
         if pg.time.get_ticks() - self.timer > 1000/5.0:
             self.blink = not self.blink
             self.timer = pg.time.get_ticks()
@@ -54,3 +65,4 @@ class Credits(tools._State):
         if event.type == pg.KEYDOWN:
             self.next = "MENU"
             self.done = True
+            self.spacer = 0
