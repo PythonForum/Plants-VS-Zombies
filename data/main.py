@@ -13,7 +13,7 @@ Functions:
     main()
 """
 from . import setup,tools
-from .states import title,splash,menu,creds#, game
+from .states import title,splash,menu,creds,story,survive, highscore#, game
 
 def main():
     """Add states to control here."""
@@ -21,7 +21,10 @@ def main():
     state_dict = {"SPLASH" : splash.Splash(),
                   "TITLE"  : title.Title(),
                   "MENU"   : menu.Menu(),
-                  'CREDS'  : creds.Credits()
+                  'CREDS'  : creds.Credits(),
+                  'STORY'  : story.Story(),
+                  'SURVIVE': survive.Survive(),
+                  'HIGHS'   : highscore.Highscore()
                   }
 ##                  "GAME"   : game.Game()}
     RunIt.setup_states(state_dict,"SPLASH")
