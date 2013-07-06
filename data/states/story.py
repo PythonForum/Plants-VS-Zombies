@@ -30,13 +30,19 @@ class Story(tools._State):
        a rendered surface of the msg given."""
         RenderFont = pg.font.Font(su.FONTS[font],size)
         return RenderFont.render(msg,1,color)
+        
+    def sun_updates(self, Surf):
+        for obj in self.suns[:]:
+            if obj.image_rect.collidepoint(pg.mouse.get_pos()) and pg.mouse.get_pressed()[0]:
+                self.suns.remove(obj)
+                continue
+            obj.update
+            Surf.blit(obj.image, obj.image_rect)
  
     def update(self,Surf,keys,mouse):
         """Updates the title screen."""
-        for s in self.suns:
-            s.update()
         Surf.fill((0,0,0))
- 
+        self.sun_updates(Surf)
         
         if pg.time.get_ticks() - self.timer > 1000/5.0:
             self.blink = not self.blink
@@ -44,8 +50,6 @@ class Story(tools._State):
         if self.blink:
             Surf.blit(self.ne_key,self.ne_key_rect)
         Surf.blit(self.title, self.title_rect)
-        for obj in self.suns:
-            Surf.blit(obj.image, obj.image_rect)
  
     def get_event(self,event):
         """Get events from Control.  Currently changes to next state on any key

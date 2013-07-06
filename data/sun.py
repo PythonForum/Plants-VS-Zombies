@@ -7,6 +7,8 @@ import random
 class Sun:
     def __init__(self):
         self.image = su.GFX['sun']
+        self.mask = pg.mask.from_surface(self.image)
+
         x = self.random_sunX()
         self.image_rect = self.image.get_rect(center=(x,20))
         self.speed = 2
