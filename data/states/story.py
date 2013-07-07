@@ -12,6 +12,8 @@ class Story(tools._State):
         tools._State.__init__(self)
         
         self.level_sun_fall = 10
+        self.mouse_mask = pg.mask.Mask((1,1))
+        #self.mouse_rect = self.mouse_mask.get_rect()
     
         self.suns = []
         for i in range(self.level_sun_fall):
@@ -32,10 +34,16 @@ class Story(tools._State):
         return RenderFont.render(msg,1,color)
         
     def sun_updates(self, Surf):
+        
         for obj in self.suns[:]:
             if obj.image_rect.collidepoint(pg.mouse.get_pos()) and pg.mouse.get_pressed()[0]:
-                self.suns.remove(obj)
-                continue
+                mouse = pg.mouse.get_pos()
+                offset = mouse[0] - obj.image_rect.x, mouse[1] - obj.image_rect.y
+                
+                if not obj.mask.get_at(offset):
+                    if pg.mouse.get_pressed()[0]:
+                        self.suns.remove(obj)
+                        break
             obj.update
             Surf.blit(obj.image, obj.image_rect)
  
