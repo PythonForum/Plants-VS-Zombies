@@ -1,7 +1,7 @@
 
 
 import pygame as pg
-import setup as su,tools
+from .. import setup as su,tools
 import random
 
 class Sun:
