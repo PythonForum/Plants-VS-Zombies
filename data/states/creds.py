@@ -1,8 +1,6 @@
-
-
 import pygame as pg
-from .. import setup as su,tools
- 
+from .. import setup,tools
+
 class Credits(tools._State):
     """This State is updated while our game shows the Credit screen."""
     def __init__(self):
@@ -19,54 +17,53 @@ class Credits(tools._State):
                           'person8']
         self.render_list()
         self.ne_key = self.render_font("Fixedsys500c",20,"[Press Any Key]",(255,255,0))
-        self.ne_key_rect = self.ne_key.get_rect(center=(su.SCREEN_RECT.centerx,500))
+        self.ne_key_rect = self.ne_key.get_rect(center=(setup.SCREEN_RECT.centerx,500))
         self.blink = False
         self.timer = 0.0
- 
+
     def render_list(self):
         self.names = []
         for i,name in enumerate(self.name_list):
             obj = self.render_font("Fixedsys500c",40, name)
-            obj_rect = obj.get_rect(center=(su.SCREEN_RECT.centerx,su.SCREEN_RECT.centery+i*self.spacing))
+            obj_rect = obj.get_rect(center=(setup.SCREEN_RECT.centerx,
+                                            setup.SCREEN_RECT.bottom+i*self.spacing))
             self.names.append([obj, obj_rect])
- 
+
     def render_font(self,font,size,msg,color=(255,255,255)):
         """Takes the name of a loaded font, the size, and the color and returns
        a rendered surface of the msg given."""
-        RenderFont = pg.font.Font(su.FONTS[font],size)
-        return RenderFont.render(msg,1,color)
- 
-    def update(self,Surf,keys,mouse):
+        selected_font = pg.font.Font(setup.FONTS[font],size)
+        return selected_font.render(msg,1,color)
+
+    def update(self,surface,keys,mouse):
         """Updates the title screen."""
-        Surf.fill((0,0,0))
- 
+        surface.fill((0,0,0))
+
         for num, name in enumerate(self.names[:]):
             if self.names[num][1].bottom > 0:
-                Surf.blit(name[0], name[1])
+                surface.blit(name[0], name[1])
             elif self.names[-1][1].bottom < 0:
                 self.next = "MENU"
                 self.done = True
                 self.spacer = 0
             self.names[num][1][1] -= self.scroll_speed
- 
+
         if pg.time.get_ticks() - self.timer > 1000/5.0:
             self.blink = not self.blink
             self.timer = pg.time.get_ticks()
         if self.blink:
-            Surf.blit(self.ne_key,self.ne_key_rect)
- 
+            surface.blit(self.ne_key,self.ne_key_rect)
+
     def cleanup(self):
         """Add variables that should persist to the self.persist dictionary.
        Then reset State.done to False."""
         self.render_list()
         self.done = False
         return self.persist
- 
+
     def get_event(self,event):
         """Get events from Control.  Currently changes to next state on any key
        press."""
         if event.type == pg.KEYDOWN:
             self.next = "MENU"
             self.done = True
-            self.spacer = 0
-

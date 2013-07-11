@@ -5,13 +5,13 @@ No warranty of any kind expressed or implied.
 
 -appended by Mekire June 30th, 2013.
 """
-import pygame as pg
 import sys
+import pygame as pg
 from data.main import main
 
 if __name__ == '__main__':
     try:
         main()
     except KeyboardInterrupt:
-        pass 
+        pass
     pg.quit();sys.exit()
