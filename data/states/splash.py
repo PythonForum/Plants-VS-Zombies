@@ -4,18 +4,18 @@ Overview:
     The splash screen of the game. The first thing the user sees.
 Imports:
     pygame as pg
-    from .. import setup as su,tools
+    from .. import setup,tools
 Classes:
     Splash(tools._State):
         Methods:
             __init__(self)
             render_font(self,font,size,msg,color=(255,255,255)
             make_text_list(self,font,size,strings,color,start_y,y_space)
-            update(self,Surf,keys,mouse)
+            update(self,surface,keys,mouse)
             get_event(self,event)
 """
 import pygame as pg
-from .. import setup as su,tools
+from .. import setup,tools
 
 class Splash(tools._State):
     """This State is updated while our game shows the splash screen."""
@@ -24,12 +24,12 @@ class Splash(tools._State):
         self.next = "TITLE"
         self.timeout = 5
 
-        self.cover = pg.Surface((su.SCREEN_SIZE))
+        self.cover = pg.Surface((setup.SCREEN_SIZE))
         self.cover.fill(0)
         self.cover_alpha = 256
         self.alpha_step  = 3
 
-        self.image = su.GFX['splash_page']
+        self.image = setup.GFX['splash_page_try']
         text = ["Brought to you by","The","python-forum.org","Community"]
         self.rendered_text = self.make_text_list("Fixedsys500c",50,text,(0,0,0),320,50)
 
@@ -40,24 +40,24 @@ class Splash(tools._State):
         rendered_text = []
         for i,string in enumerate(strings):
             msg = self.render_font(font,size,string,color)
-            rect = msg.get_rect(center=(su.SCREEN_RECT.centerx,start_y+i*y_space))
+            rect = msg.get_rect(center=(setup.SCREEN_RECT.centerx,start_y+i*y_space))
             rendered_text.append((msg,rect))
         return rendered_text
 
     def render_font(self,font,size,msg,color=(255,255,255)):
         """Takes the name of a loaded font, the size, and the color and returns
         a rendered surface of the msg given."""
-        RenderFont = pg.font.Font(su.FONTS[font],size)
-        return RenderFont.render(msg,1,color)
+        selected_font = pg.font.Font(setup.FONTS[font],size)
+        return selected_font.render(msg,1,color)
 
-    def update(self, Surf, keys,mouse):
+    def update(self,surface,keys,mouse):
         """Updates the splash screen."""
-        Surf.blit(self.image, (0,0))
+        surface.blit(self.image, (0,0))
         for msg in self.rendered_text:
-            Surf.blit(*msg)
+            surface.blit(*msg)
         self.cover.set_alpha(self.cover_alpha)
         self.cover_alpha = max(self.cover_alpha-self.alpha_step,0)
-        Surf.blit(self.cover,(0,0))
+        surface.blit(self.cover,(0,0))
         if pg.time.get_ticks()-self.start_time > 1000.0*self.timeout:
             self.done = True
 

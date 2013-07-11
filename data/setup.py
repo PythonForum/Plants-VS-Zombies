@@ -3,8 +3,8 @@ Module: setup.py
 Overview:
     This module initializes the display and creates dictionaries of resources.
 Imports:
-    pygame as pg
     os
+    pygame as pg
     from . import tools
 Global Constants:
     SCREEN_SIZE
@@ -16,8 +16,8 @@ Global Constants:
     GFX
     SFX
 """
-import pygame as pg
 import os
+import pygame as pg
 from . import tools
 
 SCREEN_SIZE = 800,600

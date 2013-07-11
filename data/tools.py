@@ -4,8 +4,8 @@ Overview:
     This module contains the fundamental Control class and a prototype class
     for States.  Also contained here are resource loading functions.
 Imports:
-    pygame as pg
     os
+    pygame as pg
 Classes:
     Control(object):
         Methods:
@@ -21,7 +21,7 @@ Classes:
             get_event(self,event)
             startup(self,persistant)
             cleanup(self)
-            update(self,Surf,keys,mouse)
+            update(self,surface,keys,mouse)
 Functions:
     load_all_gfx(directory,colorkey=(255,0,255),accept=(".png",".jpg",".bmp"))
     load_all_music(directory,accept=(".wav",".mp3",".ogg",".mdi"))
@@ -29,8 +29,8 @@ Functions:
     load_all_sfx(directory,accept=(".wav",".mp3",".ogg",".mdi"))
 
 """
-import pygame as pg
 import os
+import pygame as pg
 
 class Control(object):
     """Control class for entire project. Contains the game loop, and contains
@@ -40,36 +40,36 @@ class Control(object):
         self.screen = pg.display.get_surface()
         self.caption = caption
         self.done = False
-        self.Clock = pg.time.Clock()
+        self.clock = pg.time.Clock()
         self.fps = 60
         self.show_fps = True
         self.keys = pg.key.get_pressed()
         self.mouse = pg.mouse.get_pressed()
         self.state_dict = {}
         self.state_name = None
-        self.State = None
+        self.state = None
     def setup_states(self,state_dict,start_state):
         """Given a dictionary of States and a State to start in,
         builds the self.state_dict."""
         self.state_dict = state_dict
         self.state_name = start_state
-        self.State = self.state_dict[self.state_name]
+        self.state = self.state_dict[self.state_name]
     def update(self):
         """Checks if a state is done or has called for a game quit.
         State is flipped if neccessary and State.update is called."""
-        if self.State.quit:
+        if self.state.quit:
             self.done = True
-        elif self.State.done:
+        elif self.state.done:
             self.flip_state()
-        self.State.update(self.screen,self.keys,self.mouse)
+        self.state.update(self.screen,self.keys,self.mouse)
     def flip_state(self):
         """When a State changes to done necessary startup and cleanup functions
         are called and the current State is changed."""
-        previous,self.state_name = self.state_name,self.State.next
-        persist = self.State.cleanup()
-        self.State = self.state_dict[self.state_name]
-        self.State.startup(persist)
-        self.State.previous = previous
+        previous,self.state_name = self.state_name,self.state.next
+        persist = self.state.cleanup()
+        self.state = self.state_dict[self.state_name]
+        self.state.startup(persist)
+        self.state.previous = previous
     def event_loop(self):
         """Process all events and pass them down to current State.  The f5 key
         globally turns on/off the display of FPS in the caption"""
@@ -81,7 +81,7 @@ class Control(object):
                 self.toggle_show_fps()
             elif event.type in (pg.MOUSEBUTTONDOWN,pg.MOUSEBUTTONUP):
                 self.mouse = pg.mouse.get_pressed()
-            self.State.get_event(event)
+            self.state.get_event(event)
     def toggle_show_fps(self):
         """Press f5 to turn on/off displaying the framerate in the caption."""
         if self.keys[pg.K_F5]:
@@ -94,9 +94,9 @@ class Control(object):
             self.event_loop()
             self.update()
             pg.display.update()
-            self.Clock.tick(self.fps)
+            self.clock.tick(self.fps)
             if self.show_fps:
-                with_fps = "{} - {:.2f} FPS".format(self.caption,self.Clock.get_fps())
+                with_fps = "{} - {:.2f} FPS".format(self.caption,self.clock.get_fps())
                 pg.display.set_caption(with_fps)
 
 class _State(object):
@@ -125,7 +125,7 @@ class _State(object):
         Then reset State.done to False."""
         self.done = False
         return self.persist
-    def update(self,Surf,keys,mouse):
+    def update(self,surface,keys,mouse):
         """Update function for state.  Must be overloaded in children."""
         pass
 
