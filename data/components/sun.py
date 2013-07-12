@@ -1,11 +1,11 @@
 
-
 import pygame as pg
 from .. import setup as su,tools
 import random
 
 class Sun:
-    def __init__(self):
+    def __init__(self, value):
+        self.value = value
         self.image = su.GFX['sun']
         self.mask = pg.mask.from_surface(self.image)
 
@@ -20,7 +20,7 @@ class Sun:
         
     def random_sunY(self):
         '''sun stop on random y axis'''
-        return random.randint(1, su.SCREEN_RECT.centery)
+        return random.randint(su.SCREEN_RECT.centery // 2, su.SCREEN_RECT.centery)
         
     def update(self):
         if self.image_rect.centery < self.stop:
