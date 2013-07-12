@@ -37,5 +37,6 @@ class Story(tools._State):
         """Get events from Control.  Currently changes to next state on any key
        press."""
         if event.type == pg.KEYDOWN:
-            self.next = "MENU"
-            self.done = True
+            #if event.key == pg.K_ESCAPE:
+                self.next = "MENU"
+                self.done = True

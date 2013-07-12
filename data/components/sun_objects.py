@@ -9,18 +9,18 @@ class SunObjects:
         self.suns = []
         self.suns.append(Sun(self.large_sun_value)) #start with one test
         self.sun_timer = 0
-        self.sun_spacing = 5
-        self.sun_text()
+        self.sun_delay = 5
+        self.text_update()
         
-    def sun_text(self):
+    def text_update(self):
         selected_font = pg.font.Font(setup.FONTS["Fixedsys500c"], 20)
         self.sun_amount = selected_font.render(str(self.sun_total), 1, (255,255,255))
         self.sun_amount_rect = self.sun_amount.get_rect()
     
     def sun_updates(self, surface):
-        self.sun_text()
+        self.text_update()
 
-        if (pg.time.get_ticks() - self.sun_timer) > 1000*self.sun_spacing:
+        if (pg.time.get_ticks() - self.sun_timer) > 1000*self.sun_delay:
             self.sun_timer = pg.time.get_ticks()
             self.suns.append(Sun(self.large_sun_value)) 
         
