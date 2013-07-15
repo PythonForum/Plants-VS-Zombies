@@ -16,3 +16,10 @@ Assignments:
 - graphic artists <NAMES HERE>
 - programmers <NAMES HERE>
 
+
+
+
+Pending Ideas List:
+- two player
+- multiple lawns
+
