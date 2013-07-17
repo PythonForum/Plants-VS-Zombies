@@ -23,6 +23,11 @@ from . import tools
 SCREEN_SIZE = 800,600
 ORIGINAL_CAPTION = "Botany vs Biomass"
 
+#Locations of widgets during gameplay
+CELL_SIZE = (72,72)
+GRID_MARGIN = (75,165)
+SELECTOR_MARGIN = (150,0)
+
 #Initialization
 ##os.environ['SDL_VIDEO_CENTERED'] = '1'
 pg.init()
