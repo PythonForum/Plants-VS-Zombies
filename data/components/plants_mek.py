@@ -46,5 +46,6 @@ class Sunflower(_Plant):
     def __init__(self,coords,location):
         _Plant.__init__(self,coords,location,[(0,1)],"SUNFLOWER")
 
+
 PLANT_DICT = {"SHOOTER"   : Shooter,
               "SUNFLOWER" : Sunflower}

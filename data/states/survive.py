@@ -116,14 +116,15 @@ class Survive(tools._State):
             if not any(plant.coordinates==coords for plant in self.plants):
                 self.plants.append(plants_mek.PLANT_DICT[name](coords,location))
                 self.energy -= self.selector.selected.cost
+                self.selector.selected.deployed()
                 self.selector.selected = None
 
     def get_event(self,event):
-        """Get events from Control.  Currently changes to next state on any key
-       press."""
+        """Get events from Control."""
         if event.type == pg.KEYDOWN:
-            self.next = "MENU"
-            self.done = True
+            if event.key == pg.K_ESCAPE:
+                self.next = "MENU"
+                self.done = True
         if event.type == pg.MOUSEBUTTONDOWN:
             if self.mode == "PLAY":
                 if event.button == 1:
