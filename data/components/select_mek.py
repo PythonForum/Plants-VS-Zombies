@@ -1,5 +1,7 @@
+import math
 import pygame as pg
 from .. import setup
+
 
 class Selector(object):
     def __init__(self,location,plant_names):
@@ -27,6 +29,7 @@ class Selector(object):
         for plant in self.plants:
             plant.update(surface,self.selected)
 
+
 class _SelectPlant(object):
     def __init__(self,location,sheet_coord,name):
         self.rect = pg.Rect(location,setup.CELL_SIZE)
@@ -38,10 +41,21 @@ class _SelectPlant(object):
         self.timer = 0.0
         self.setup_cost(50)
         self.ready = True
+        self.make_all_highlights()
+
+    def deployed(self):
+        self.ready = False
+        self.timer = pg.time.get_ticks()
+        self.recharge_highlight = pg.Surface((setup.CELL_SIZE)).convert_alpha()
+        self.recharge_highlight.fill((0,0,0,200))
+
+    def make_all_highlights(self):
         self.highlight = pg.Surface((self.rect.width+2,self.rect.height+21)).convert_alpha()
         self.select_highlight = self.highlight.copy()
         self.highlight.fill((100,100,255,100))
         self.select_highlight.fill((0,0,0,100))
+        self.recharge_highlight = pg.Surface((setup.CELL_SIZE)).convert_alpha()
+        self.recharge_rect = self.recharge_highlight.get_rect()
         self.ghost = self.make_ghost()
 
     def make_ghost(self):
@@ -52,6 +66,18 @@ class _SelectPlant(object):
                 array[j][i] = max(array[j][i]-80,0)
         return ghost
 
+    def make_recharge_highlight(self):
+        elapsed = pg.time.get_ticks()-self.timer
+        percent_recharged = elapsed/(self.time_for_recharge*1000)
+        angle = 2*math.pi*percent_recharged
+        x = self.recharge_rect.centerx+50*math.cos(angle)
+        y = self.recharge_rect.centery+50*math.sin(angle)
+        pg.draw.line(self.recharge_highlight,(0,0,0,0),
+                     self.recharge_rect.center,(x,y),5)
+        if percent_recharged >= 1:
+            self.ready = True
+        return self.recharge_highlight
+
     def setup_cost(self,cost):
         self.cost = cost
         target_rect = pg.Rect(self.rect.x,self.rect.bottom,setup.CELL_SIZE[0],21)
@@ -61,11 +87,13 @@ class _SelectPlant(object):
 
     def update(self,surface,selected):
         if self != selected:
-            if self.rect.collidepoint(pg.mouse.get_pos()):
+            if self.ready and self.rect.collidepoint(pg.mouse.get_pos()):
                 surface.blit(self.highlight,self.rect)
         else:
             surface.blit(self.select_highlight,self.rect)
         surface.blit(self.image,self.rect)
+        if not self.ready:
+            surface.blit(self.make_recharge_highlight(),self.rect)
         surface.blit(self.cost_txt,self.cost_txt_rect)
 
 
