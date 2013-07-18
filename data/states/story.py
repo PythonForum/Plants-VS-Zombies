@@ -22,13 +22,14 @@ class Story(tools._State):
         selected_font = pg.font.Font(setup.FONTS[font],size)
         return selected_font.render(msg,1,color)
 
-    def update(self,surface,keys,mouse):
+    def update(self,surface,keys,current_time):
         """Updates the title screen."""
+        self.current_time = current_time
         surface.fill((0,0,0))
         self.sun_obj.sun_updates(surface)
-        if pg.time.get_ticks() - self.timer > 1000/5.0:
+        if self.current_time-self.timer > 1000/5.0:
             self.blink = not self.blink
-            self.timer = pg.time.get_ticks()
+            self.timer = self.current_time
         if self.blink:
             surface.blit(self.ne_key,self.ne_key_rect)
         surface.blit(self.title, self.title_rect)

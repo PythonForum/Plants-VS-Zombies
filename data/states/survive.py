@@ -13,7 +13,9 @@ class Survive(tools._State):
         self.grid_rect = pg.Rect(setup.GRID_MARGIN,(setup.CELL_SIZE[0]*9,
                                                     setup.CELL_SIZE[1]*5))
 
-    def reset(self):
+    def startup(self,current_time,persistant):
+        """Called when this State gains control; preparing the state for play."""
+        tools._State.startup(self,current_time,persistant)
         self.mode = "READY"
         self.energy = 200
         self.energy_rect = pg.Rect(31,49,88,32)
@@ -22,8 +24,7 @@ class Survive(tools._State):
         self.suns = []
         self.plants = []
         self.zombies = []
-        self.current_time = pg.time.get_ticks()
-        self.sun_timer = random.uniform(5,15)
+        self.sun_timer = random.uniform(5,12)
         self.last_sun_time = self.start_time
         self.plant_cursor = None
         self.cursor_rect = None
@@ -34,22 +35,24 @@ class Survive(tools._State):
         selected_font = pg.font.Font(setup.FONTS[font],size)
         return selected_font.render(msg,1,color)
 
-    def update(self,surface,keys,mouse):
+    def update(self,surface,keys,current_time):
         """Updates the title screen."""
+        self.current_time = current_time
         surface.blit(self.background,(0,0))
-        self.current_time = pg.time.get_ticks()
         if self.mode == "READY":
             if self.current_time-self.start_time <= 3.0*1000:
                 surface.blit(self.ready_msg,self.ready_rect)
             else:
                 self.mode = "PLAY"
         self.update_energy(surface)
-        self.selector.update(surface)
+        self.selector.update(surface,self.current_time)
         self.update_plants(surface)
         self.update_suns(surface)
         self.update_cursor(surface)
 
     def update_cursor(self,surface):
+        """When a plant is selected, updates the cursor and corresponding
+        ghost image if applicable."""
         if self.selector.selected:
             mouse = pg.mouse.get_pos()
             self.cursor_rect = self.plant_cursor.get_rect(center=mouse)
@@ -60,26 +63,30 @@ class Survive(tools._State):
             surface.blit(self.plant_cursor,self.cursor_rect)
 
     def get_coordinates(self,mouse):
+        """Return mouse location in the form of grid coordinates."""
         x = (mouse[0]-setup.GRID_MARGIN[0])//setup.CELL_SIZE[0]
         y = (mouse[1]-setup.GRID_MARGIN[1])//setup.CELL_SIZE[1]
         return x,y
     def get_position_from_coordinates(self,coords):
+        """Return absolute screen location coresponding to passed coordinates."""
         location = (setup.GRID_MARGIN[0]+setup.CELL_SIZE[0]*coords[0],
                     setup.GRID_MARGIN[1]+setup.CELL_SIZE[1]*coords[1])
         return location
 
     def update_suns(self,surface):
+        """Generates a random sun if enough time has ellapsed, and updates all
+        current Sun instances."""
         if self.current_time-self.last_sun_time > self.sun_timer*1000:
-            if len(self.suns) < 10:
+            if len(self.suns) < 20:
                 self.suns.append(sun_mek.Sun())
-                self.sun_timer = random.uniform(5,15)
+                self.sun_timer = random.uniform(5,12)
                 self.last_sun_time = self.current_time
         for sun in self.suns:
-            sun.update(surface)
+            sun.update(surface,self.current_time)
 
     def update_plants(self,surface):
         for plant in self.plants:
-            plant.update(surface)
+            plant.update(surface,self.current_time)
 
     def update_energy(self,surface):
         energy_txt = self.render_font("Fixedsys500c",35,str(self.energy),(0,0,0))
@@ -87,6 +94,7 @@ class Survive(tools._State):
         surface.blit(energy_txt,energy_txt_rect)
 
     def clicked_sun(self,event):
+        """Deletes suns and adds energy when clicked."""
         if not self.selector.selected:
             for sun in self.suns[:]:
                 if sun.base_rect.collidepoint(event.pos):
@@ -95,20 +103,18 @@ class Survive(tools._State):
                     return True
 
     def clicked_selector(self,event):
+        """Reacts to mouse clicks on the plant selection panel."""
         for plant in self.selector.plants:
             if plant.rect.collidepoint(event.pos) and plant.ready:
                 if self.energy >= plant.cost:
                     self.selector.select_plant(plant)
                     self.plant_cursor = plant.image.copy()
-                    return 1
+                    return True
         else:
             self.selector.selected = None
 
-    def startup(self,persistant):
-        tools._State.startup(self,persistant)
-        self.reset()
-
     def add_plant(self,event):
+        """Adds currently selected plant to the grid."""
         if self.selector.selected:
             name = self.selector.selected.name
             coords = self.get_coordinates(event.pos)

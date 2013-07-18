@@ -12,7 +12,7 @@ Classes:
             render_font(self,font,size,msg,color=(255,255,255)
             pre_render_options(self)
             get_event(self,event)
-            update(self,Surf,keys,mouse)
+            update(self,Surf,keys,current_time)
             timeout(self)
 """
 import pygame as pg
@@ -65,8 +65,9 @@ class Menu(tools._State):
                         self.done = True
                     break
 
-    def update(self,surface,keys,mouse):
+    def update(self,surface,keys,current_time):
         """Update function for Menu State."""
+        self.current_time = current_time
         surface.fill((50,50,150))
         surface.blit(self.title,self.title_rect)
         for i,opt in enumerate(self.rendered["des"]):
@@ -81,6 +82,6 @@ class Menu(tools._State):
 
     def timeout(self):
         """Timeout and return to title screen after 15 seconds."""
-        if pg.time.get_ticks()-self.start_time > self.timeout_limit*1000:
+        if self.current_time-self.start_time > self.timeout_limit*1000:
             self.next = "TITLE"
             self.done = True

@@ -11,7 +11,7 @@ Classes:
             __init__(self)
             render_font(self,font,size,msg,color=(255,255,255)
             make_text_list(self,font,size,strings,color,start_y,y_space)
-            update(self,surface,keys,mouse)
+            update(self,surface,keys,current_time)
             get_event(self,event)
 """
 import pygame as pg
@@ -50,15 +50,16 @@ class Splash(tools._State):
         selected_font = pg.font.Font(setup.FONTS[font],size)
         return selected_font.render(msg,1,color)
 
-    def update(self,surface,keys,mouse):
+    def update(self,surface,keys,current_time):
         """Updates the splash screen."""
+        self.current_time = current_time
         surface.blit(self.image, (0,0))
         for msg in self.rendered_text:
             surface.blit(*msg)
         self.cover.set_alpha(self.cover_alpha)
         self.cover_alpha = max(self.cover_alpha-self.alpha_step,0)
         surface.blit(self.cover,(0,0))
-        if pg.time.get_ticks()-self.start_time > 1000.0*self.timeout:
+        if self.current_time-self.start_time > 1000.0*self.timeout:
             self.done = True
 
     def get_event(self,event):

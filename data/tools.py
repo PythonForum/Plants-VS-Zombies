@@ -19,9 +19,9 @@ Classes:
     _State(object):
         Methods:
             get_event(self,event)
-            startup(self,persistant)
+            startup(self,current_time,persistant)
             cleanup(self)
-            update(self,surface,keys,mouse)
+            update(self,surface,keys,current_time)
 Functions:
     load_all_gfx(directory,colorkey=(255,0,255),accept=(".png",".jpg",".bmp"))
     load_all_music(directory,accept=(".wav",".mp3",".ogg",".mdi"))
@@ -43,8 +43,8 @@ class Control(object):
         self.clock = pg.time.Clock()
         self.fps = 60
         self.show_fps = True
+        self.current_time = 0.0
         self.keys = pg.key.get_pressed()
-        self.mouse = pg.mouse.get_pressed()
         self.state_dict = {}
         self.state_name = None
         self.state = None
@@ -57,18 +57,19 @@ class Control(object):
     def update(self):
         """Checks if a state is done or has called for a game quit.
         State is flipped if neccessary and State.update is called."""
+        self.current_time = pg.time.get_ticks()
         if self.state.quit:
             self.done = True
         elif self.state.done:
             self.flip_state()
-        self.state.update(self.screen,self.keys,self.mouse)
+        self.state.update(self.screen,self.keys,self.current_time)
     def flip_state(self):
         """When a State changes to done necessary startup and cleanup functions
         are called and the current State is changed."""
         previous,self.state_name = self.state_name,self.state.next
         persist = self.state.cleanup()
         self.state = self.state_dict[self.state_name]
-        self.state.startup(persist)
+        self.state.startup(self.current_time,persist)
         self.state.previous = previous
     def event_loop(self):
         """Process all events and pass them down to current State.  The f5 key
@@ -79,8 +80,6 @@ class Control(object):
             elif event.type in (pg.KEYDOWN,pg.KEYUP):
                 self.keys = pg.key.get_pressed()
                 self.toggle_show_fps()
-            elif event.type in (pg.MOUSEBUTTONDOWN,pg.MOUSEBUTTONUP):
-                self.mouse = pg.mouse.get_pressed()
             self.state.get_event(event)
     def toggle_show_fps(self):
         """Press f5 to turn on/off displaying the framerate in the caption."""
@@ -105,7 +104,8 @@ class _State(object):
     must be overloaded in the childclass.  startup and cleanup need to be
     overloaded when there is data that must persist between States."""
     def __init__(self):
-        self.start_time = pg.time.get_ticks()
+        self.start_time = 0.0
+        self.current_time = 0.0##
         self.done = False
         self.quit = False
         self.next = None
@@ -115,17 +115,17 @@ class _State(object):
         """Processes events that were passed from the main event loop.
         Must be overloaded in children."""
         pass
-    def startup(self,persistant):
+    def startup(self,current_time,persistant):
         """Add variables passed in persistant to the proper attributes and
         set the start time of the State to the current time."""
         self.persist = persistant
-        self.start_time = pg.time.get_ticks()
+        self.start_time = current_time
     def cleanup(self):
         """Add variables that should persist to the self.persist dictionary.
         Then reset State.done to False."""
         self.done = False
         return self.persist
-    def update(self,surface,keys,mouse):
+    def update(self,surface,keys,current_time):
         """Update function for state.  Must be overloaded in children."""
         pass
 

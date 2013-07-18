@@ -35,8 +35,9 @@ class Credits(tools._State):
         selected_font = pg.font.Font(setup.FONTS[font],size)
         return selected_font.render(msg,1,color)
 
-    def update(self,surface,keys,mouse):
+    def update(self,surface,keys,current_time):
         """Updates the title screen."""
+        self.current_time = current_time
         surface.fill((0,0,0))
 
         for num, name in enumerate(self.names[:]):
@@ -45,12 +46,11 @@ class Credits(tools._State):
             elif self.names[-1][1].bottom < 0:
                 self.next = "MENU"
                 self.done = True
-                self.spacer = 0
             self.names[num][1][1] -= self.scroll_speed
 
-        if pg.time.get_ticks() - self.timer > 1000/5.0:
+        if self.current_time-self.timer > 1000/5.0:
             self.blink = not self.blink
-            self.timer = pg.time.get_ticks()
+            self.timer = self.current_time
         if self.blink:
             surface.blit(self.ne_key,self.ne_key_rect)
 
