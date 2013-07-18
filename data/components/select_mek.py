@@ -4,6 +4,7 @@ from .. import setup
 
 
 class Selector(object):
+    """Class representing our plant selector window."""
     def __init__(self,location,plant_names):
         self.image = setup.GFX["selector"]
         self.rect = self.image.get_rect(topleft=location)
@@ -13,8 +14,10 @@ class Selector(object):
                            "SUNFLOWER" : SunflowerSelect}
         self.plants = self.setup_plants(plant_names)
         self.selected = False
+        self.current_time = 0.0
 
     def setup_plants(self,plant_names):
+        """Add the plants passed by their names into the selector window."""
         plants = []
         for i,plant in enumerate(plant_names):
             location = (self.pad_item[0]+self.spacer*i,self.pad_item[1])
@@ -22,12 +25,15 @@ class Selector(object):
         return plants
 
     def select_plant(self,plant):
+        """Set a clicked plant to selected."""
         self.selected = plant
 
-    def update(self,surface):
+    def update(self,surface,current_time):
+        """Update entire selector window."""
+        self.current_time = current_time
         surface.blit(self.image,self.rect)
         for plant in self.plants:
-            plant.update(surface,self.selected)
+            plant.update(surface,self.selected,self.current_time)
 
 
 class _SelectPlant(object):
@@ -38,6 +44,7 @@ class _SelectPlant(object):
         self.image = sheet.subsurface(sheet_location,setup.CELL_SIZE)
         self.name = name
         self.time_for_recharge = 5.0
+        self.current_time = 0.0
         self.timer = 0.0
         self.setup_cost(50)
         self.ready = True
@@ -45,7 +52,7 @@ class _SelectPlant(object):
 
     def deployed(self):
         self.ready = False
-        self.timer = pg.time.get_ticks()
+        self.timer = pg.time.get_ticks()#self.current_time
         self.recharge_highlight = pg.Surface((setup.CELL_SIZE)).convert_alpha()
         self.recharge_highlight.fill((0,0,0,200))
 
@@ -85,7 +92,8 @@ class _SelectPlant(object):
         self.cost_txt = font.render(str(self.cost),1,(0,0,0))
         self.cost_txt_rect = self.cost_txt.get_rect(center=target_rect.center)
 
-    def update(self,surface,selected):
+    def update(self,surface,selected,current_time):
+        self.current_time = current_time
         if self != selected:
             if self.ready and self.rect.collidepoint(pg.mouse.get_pos()):
                 surface.blit(self.highlight,self.rect)

@@ -5,8 +5,9 @@ class _Plant(object):
     def __init__(self,coords,location,sheet_coords,name):
         self.coordinates = coords
         self.rect = pg.Rect(location,setup.CELL_SIZE)
-        sheet = setup.GFX["plant_sheet"].copy()
+        sheet = setup.GFX["plant_sheet"]
         self.fps = 5.0
+        self.current_time = 0.0
         self.animation_timer = 0.0
         self.frames = self.get_frames(sheet_coords,sheet)
         self.frame = 0
@@ -23,16 +24,16 @@ class _Plant(object):
         return frames
 
     def animate(self):
-        current_time = pg.time.get_ticks()
-        if current_time - self.animation_timer > 1000//self.fps:
+        if self.current_time - self.animation_timer > 1000//self.fps:
             self.frame = (self.frame+1)%len(self.frames)
             self.image = self.frames[self.frame]
-            self.animation_timer = current_time
+            self.animation_timer = self.current_time
 
     def action(self):
         pass
 
-    def update(self,surface):
+    def update(self,surface,current_time):
+        self.current_time = current_time
         self.animate()
         surface.blit(self.image,self.rect)
 
@@ -41,6 +42,7 @@ class Shooter(_Plant):
     def __init__(self,coords,location):
         frame_coords = [(0,0),(1,0)]
         _Plant.__init__(self,coords,location,frame_coords,"SHOOTER")
+
 
 class Sunflower(_Plant):
     def __init__(self,coords,location):
