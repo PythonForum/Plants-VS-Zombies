@@ -27,10 +27,11 @@ Functions:
     load_all_music(directory,accept=(".wav",".mp3",".ogg",".mdi"))
     load_all_fonts(directory,accept=(".ttf",))
     load_all_sfx(directory,accept=(".wav",".mp3",".ogg",".mdi"))
-
 """
+
 import os
 import pygame as pg
+
 
 class Control(object):
     """Control class for entire project. Contains the game loop, and contains
@@ -48,12 +49,14 @@ class Control(object):
         self.state_dict = {}
         self.state_name = None
         self.state = None
+
     def setup_states(self,state_dict,start_state):
         """Given a dictionary of States and a State to start in,
         builds the self.state_dict."""
         self.state_dict = state_dict
         self.state_name = start_state
         self.state = self.state_dict[self.state_name]
+
     def update(self):
         """Checks if a state is done or has called for a game quit.
         State is flipped if neccessary and State.update is called."""
@@ -63,6 +66,7 @@ class Control(object):
         elif self.state.done:
             self.flip_state()
         self.state.update(self.screen,self.keys,self.current_time)
+
     def flip_state(self):
         """When a State changes to done necessary startup and cleanup functions
         are called and the current State is changed."""
@@ -71,6 +75,7 @@ class Control(object):
         self.state = self.state_dict[self.state_name]
         self.state.startup(self.current_time,persist)
         self.state.previous = previous
+
     def event_loop(self):
         """Process all events and pass them down to current State.  The f5 key
         globally turns on/off the display of FPS in the caption"""
@@ -81,12 +86,14 @@ class Control(object):
                 self.keys = pg.key.get_pressed()
                 self.toggle_show_fps()
             self.state.get_event(event)
+
     def toggle_show_fps(self):
         """Press f5 to turn on/off displaying the framerate in the caption."""
         if self.keys[pg.K_F5]:
             self.show_fps = not self.show_fps
             if not self.show_fps:
                 pg.display.set_caption(self.caption)
+
     def main(self):
         """Main loop for entire program."""
         while not self.done:
@@ -98,6 +105,7 @@ class Control(object):
                 with_fps = "{} - {:.2f} FPS".format(self.caption,self.clock.get_fps())
                 pg.display.set_caption(with_fps)
 
+
 class _State(object):
     """This is a prototype class for States.  All states should inherit from it.
     No direct instances of this class should be created. get_event and update
@@ -105,29 +113,34 @@ class _State(object):
     overloaded when there is data that must persist between States."""
     def __init__(self):
         self.start_time = 0.0
-        self.current_time = 0.0##
+        self.current_time = 0.0
         self.done = False
         self.quit = False
         self.next = None
         self.previous = None
         self.persist = {}
-    def get_event(self,event,keys,mouse):
+
+    def get_event(self,event):
         """Processes events that were passed from the main event loop.
         Must be overloaded in children."""
         pass
+
     def startup(self,current_time,persistant):
         """Add variables passed in persistant to the proper attributes and
         set the start time of the State to the current time."""
         self.persist = persistant
         self.start_time = current_time
+
     def cleanup(self):
         """Add variables that should persist to the self.persist dictionary.
         Then reset State.done to False."""
         self.done = False
         return self.persist
+
     def update(self,surface,keys,current_time):
         """Update function for state.  Must be overloaded in children."""
         pass
+
 
 ### Resource loading functions.
 def load_all_gfx(directory,colorkey=(255,0,255),accept=(".png",".jpg",".bmp")):

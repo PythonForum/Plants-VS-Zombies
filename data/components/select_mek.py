@@ -11,7 +11,8 @@ class Selector(object):
         self.pad_item = (self.rect.x+19,self.rect.y+3)
         self.spacer = 77
         self.plant_dict = {"SHOOTER"   : ShooterSelect,
-                           "SUNFLOWER" : SunflowerSelect}
+                           "SUNFLOWER" : SunflowerSelect,
+                           "TOMATO"    : TomatoSelect}
         self.plants = self.setup_plants(plant_names)
         self.selected = False
         self.current_time = 0.0
@@ -37,6 +38,7 @@ class Selector(object):
 
 
 class _SelectPlant(object):
+    """Prototype for plants in the selector window."""
     def __init__(self,location,sheet_coord,name):
         self.rect = pg.Rect(location,setup.CELL_SIZE)
         sheet = setup.GFX["plant_sheet"].copy()
@@ -51,12 +53,15 @@ class _SelectPlant(object):
         self.make_all_highlights()
 
     def deployed(self):
+        """This function is called if a selected plant is placed on the grid."""
         self.ready = False
-        self.timer = pg.time.get_ticks()#self.current_time
+        self.timer = pg.time.get_ticks() #A direct call here is justified.
         self.recharge_highlight = pg.Surface((setup.CELL_SIZE)).convert_alpha()
         self.recharge_highlight.fill((0,0,0,200))
 
     def make_all_highlights(self):
+        """Creates the highlights for hovering and selected plants and
+        creates an initial surface and rect for the recharge highlight."""
         self.highlight = pg.Surface((self.rect.width+2,self.rect.height+21)).convert_alpha()
         self.select_highlight = self.highlight.copy()
         self.highlight.fill((100,100,255,100))
@@ -66,6 +71,10 @@ class _SelectPlant(object):
         self.ghost = self.make_ghost()
 
     def make_ghost(self):
+        """Creates the semi-transparent ghost image that appears at the location
+        a plant would grow if confirmed.  As the images already contain
+        per-pixel-alpha, it is necessary to change the alpha as follows; using
+        pygame.Surface.set_alpha won't work unfortunately."""
         ghost = self.image.copy()
         array = pg.surfarray.pixels_alpha(ghost)
         for j,y in enumerate(array):
@@ -74,7 +83,10 @@ class _SelectPlant(object):
         return ghost
 
     def make_recharge_highlight(self):
-        elapsed = pg.time.get_ticks()-self.timer
+        """Creates the clock style recharging highlight. I wanted to use
+        pygame.draw.arc for this but unfortunately that draw method is badly
+        written and leaves moire patterns."""
+        elapsed = self.current_time-self.timer
         percent_recharged = elapsed/(self.time_for_recharge*1000)
         angle = 2*math.pi*percent_recharged
         x = self.recharge_rect.centerx+50*math.cos(angle)
@@ -86,6 +98,7 @@ class _SelectPlant(object):
         return self.recharge_highlight
 
     def setup_cost(self,cost):
+        """Creates rendered cost and appropriately centered rect."""
         self.cost = cost
         target_rect = pg.Rect(self.rect.x,self.rect.bottom,setup.CELL_SIZE[0],21)
         font = pg.font.Font(setup.FONTS["Fixedsys500c"],20)
@@ -93,6 +106,8 @@ class _SelectPlant(object):
         self.cost_txt_rect = self.cost_txt.get_rect(center=target_rect.center)
 
     def update(self,surface,selected,current_time):
+        """Updates for selector window plants, including highlights and
+        recharging."""
         self.current_time = current_time
         if self != selected:
             if self.ready and self.rect.collidepoint(pg.mouse.get_pos()):
@@ -111,6 +126,9 @@ class ShooterSelect(_SelectPlant):
         self.setup_cost(100)
         self.time_for_recharge = 10.0
 
+class TomatoSelect(_SelectPlant):
+    def __init__(self,location):
+        _SelectPlant.__init__(self,location,(2,2),"TOMATO")
 
 class SunflowerSelect(_SelectPlant):
     def __init__(self,location):
