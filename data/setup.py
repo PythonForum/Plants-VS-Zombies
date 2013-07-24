@@ -11,30 +11,34 @@ Global Constants:
     ORIGINAL_CAPTION
     SCREEN
     SCREEN_RECT
+    CELL_SIZE
+    GRID_MARGIN
+    SELECTOR_MARGIN
     FONTS
     MUSIC
     GFX
     SFX
 """
+
 import os
 import pygame as pg
 from . import tools
 
+
 SCREEN_SIZE = 800,600
 ORIGINAL_CAPTION = "Botany vs Biomass"
-
-#Locations of widgets during gameplay
-CELL_SIZE = (72,72)
-GRID_MARGIN = (75,165)
-SELECTOR_MARGIN = (150,0)
 
 #Initialization
 ##os.environ['SDL_VIDEO_CENTERED'] = '1'
 pg.init()
 pg.display.set_caption(ORIGINAL_CAPTION)
-
 SCREEN = pg.display.set_mode(SCREEN_SIZE)
 SCREEN_RECT = SCREEN.get_rect()
+
+#Locations of widgets during gameplay
+CELL_SIZE = (72,72)
+GRID_MARGIN = (75,165)
+SELECTOR_MARGIN = (150,0)
 
 #Resource loading (Fonts and music just contain path names).
 FONTS = tools.load_all_fonts(os.path.join("resources","fonts"))

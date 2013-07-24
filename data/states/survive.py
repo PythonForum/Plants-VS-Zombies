@@ -1,7 +1,36 @@
+"""
+Module: survive.py
+Overview:
+    This module contains the survive state.
+Imports:
+    random
+    pygame as pg
+    from .. import setup,tools
+    from ..components import sun_mek,select_mek,plants_mek
+Classes:
+    Survive(tools._State):
+        Methods:
+            __init__(self)
+            startup(self,current_time,persistant)
+            render_font(self,font,size,msg,color=(255,255,255))
+            update(self,surface,keys,current_time)
+            update_cursor(self,surface)
+            get_coordinates(self,mouse)
+            get_position_from_coordinates(self,coords)
+            update_suns(self,surface)
+            update_plants(self,surface)
+            update_energy(self,surface)
+            clicked_sun(self,event)
+            clicked_selector(self,event)
+            add_plant(self,event)
+            get_event(self,event)
+"""
+
 import random
 import pygame as pg
 from .. import setup,tools
 from ..components import sun_mek,select_mek,plants_mek
+
 
 class Survive(tools._State):
     """This State is updated while our game shows the Survive screen."""
@@ -19,7 +48,7 @@ class Survive(tools._State):
         self.mode = "READY"
         self.energy = 200
         self.energy_rect = pg.Rect(31,49,88,32)
-        self.available_plants = ["SHOOTER","SUNFLOWER"] #Initialized thusly for testing.
+        self.available_plants = ["SHOOTER","SUNFLOWER","TOMATO"] #Initialized thusly for testing.
         self.selector = select_mek.Selector(setup.SELECTOR_MARGIN,self.available_plants)
         self.suns = []
         self.plants = []
@@ -85,10 +114,12 @@ class Survive(tools._State):
             sun.update(surface,self.current_time)
 
     def update_plants(self,surface):
+        """Update all plants on the grid."""
         for plant in self.plants:
             plant.update(surface,self.current_time)
 
     def update_energy(self,surface):
+        """Render and blit the energy amount to the screen."""
         energy_txt = self.render_font("Fixedsys500c",35,str(self.energy),(0,0,0))
         energy_txt_rect = energy_txt.get_rect(center=self.energy_rect.center)
         surface.blit(energy_txt,energy_txt_rect)
@@ -110,8 +141,7 @@ class Survive(tools._State):
                     self.selector.select_plant(plant)
                     self.plant_cursor = plant.image.copy()
                     return True
-        else:
-            self.selector.selected = None
+        self.selector.selected = None
 
     def add_plant(self,event):
         """Adds currently selected plant to the grid."""
@@ -131,7 +161,7 @@ class Survive(tools._State):
             if event.key == pg.K_ESCAPE:
                 self.next = "MENU"
                 self.done = True
-        if event.type == pg.MOUSEBUTTONDOWN:
+        elif event.type == pg.MOUSEBUTTONDOWN:
             if self.mode == "PLAY":
                 if event.button == 1:
                     if self.clicked_sun(event):

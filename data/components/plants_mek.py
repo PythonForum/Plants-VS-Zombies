@@ -43,6 +43,11 @@ class Shooter(_Plant):
         frame_coords = [(0,0),(1,0)]
         _Plant.__init__(self,coords,location,frame_coords,"SHOOTER")
 
+class Tomato(_Plant):
+    def __init__(self,coords,location):
+        frame_coords = [(0,2),(1,2),(2,2),(3,2),(4,2),
+                        (0,3),(1,3),(2,3),(3,3),(4,3)]
+        _Plant.__init__(self,coords,location,frame_coords,"TOMATO")
 
 class Sunflower(_Plant):
     def __init__(self,coords,location):
@@ -50,4 +55,5 @@ class Sunflower(_Plant):
 
 
 PLANT_DICT = {"SHOOTER"   : Shooter,
-              "SUNFLOWER" : Sunflower}
+              "SUNFLOWER" : Sunflower,
+              "TOMATO"    : Tomato}
